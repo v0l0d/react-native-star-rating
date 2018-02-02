@@ -2,12 +2,8 @@
 import React, {
   Component,
 } from 'react';
-import {
-  ViewPropTypes,
-  Image,
-} from 'react-native';
-import PropTypes from 'prop-types';
-import update from 'react-addons-update';
+import { View, ViewPropTypes } from 'react-native';
+import PropTypes from 'prop-types'
 
 // Third party imports
 import Button from 'react-native-button';
@@ -19,7 +15,6 @@ import IoniconsIcons from 'react-native-vector-icons/Ionicons';
 import MaterialIconsIcons from 'react-native-vector-icons/MaterialIcons';
 import OcticonsIcons from 'react-native-vector-icons/Octicons';
 import ZocialIcons from 'react-native-vector-icons/Zocial';
-import MaterialCommunityIconsIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const iconSets = {
   Entypo: EntypoIcons,
@@ -30,7 +25,6 @@ const iconSets = {
   MaterialIcons: MaterialIconsIcons,
   Octicons: OcticonsIcons,
   Zocial: ZocialIcons,
-  MaterialCommunityIcons: MaterialCommunityIconsIcons,
 };
 
 class StarButton extends Component {
@@ -41,121 +35,45 @@ class StarButton extends Component {
     this.onButtonPress = this.onButtonPress.bind(this);
   }
 
-  onButtonPress(event) {
-    const {
-      halfStarEnabled,
-      starSize,
-      rating,
-      onStarButtonPress,
-    } = this.props;
-
-    let addition = 0;
-
-    if (halfStarEnabled) {
-      const isHalfSelected = event.nativeEvent.locationX < starSize / 2;
-      addition = isHalfSelected ? -0.5 : 0;
-    }
-
-    onStarButtonPress(rating + addition);
-  }
-
-  renderIcon() {
-    const {
-      iconSet,
-      starIconName,
-      starSize,
-      starColor,
-      starStyle,
-      reversed,
-    } = this.props;
-
-    const Icon = iconSets[iconSet];
-    let iconElement;
-
-    // To check if we need to reverse the star icon
-    const newStarStyle = update(starStyle, {
-      transform: {
-        $set: [
-          {
-            scaleX: reversed ? -1 : 1,
-          },
-        ],
-      },
-    });
-
-    if (typeof starIconName === 'string') {
-      iconElement = (
-        <Icon
-          name={starIconName}
-          size={starSize}
-          color={starColor}
-          style={newStarStyle}
-        />
-      );
-    } else {
-      const imageStyle = {
-        width: starSize,
-        height: starSize,
-        resizeMode: 'contain',
-      };
-
-      const iconStyles = [
-        imageStyle,
-        newStarStyle,
-      ];
-
-      iconElement = (
-        <Image
-          source={starIconName}
-          style={iconStyles}
-        />
-      );
-    }
-
-    return iconElement;
+  onButtonPress() {
+    this.props.onStarButtonPress(this.props.rating);
   }
 
   render() {
-    const {
-      disabled,
-      buttonStyle,
-    } = this.props;
+    const Icon = iconSets[this.props.iconSet];
 
     return (
       <Button
         activeOpacity={0.20}
-        disabled={disabled}
-        containerStyle={buttonStyle}
+        disabled={this.props.disabled}
         onPress={this.onButtonPress}
+        containerStyle={this.props.buttonStyle}
+        style={{
+          height: this.props.starSize,
+          width: this.props.starSize,
+        }}
       >
-        {this.renderIcon()}
+        <Icon
+          name={this.props.starIconName}
+          size={this.props.starSize}
+          color={this.props.starColor}
+          style={this.props.starStyle}
+        />
       </Button>
     );
   }
-
 }
 
 StarButton.propTypes = {
-  disabled: PropTypes.bool.isRequired,
-  rating: PropTypes.number.isRequired,
-  onStarButtonPress: PropTypes.func.isRequired,
-  iconSet: PropTypes.string.isRequired,
-  starSize: PropTypes.number.isRequired,
-  starIconName: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.object,
-    PropTypes.number,
-  ]).isRequired,
-  starColor: PropTypes.string.isRequired,
+  disabled: PropTypes.bool,
+  rating: PropTypes.number,
+  onStarButtonPress: PropTypes.func,
+  iconSet: PropTypes.string,
+  starSize: PropTypes.number,
+  starIconName: PropTypes.string,
+  starColor: PropTypes.string,
   starStyle: ViewPropTypes.style,
   buttonStyle: ViewPropTypes.style,
-  halfStarEnabled: PropTypes.bool.isRequired,
-  reversed: PropTypes.bool.isRequired,
-};
-
-StarButton.defaultProps = {
-  starStyle: {},
-  buttonStyle: {},
 };
 
 export default StarButton;
